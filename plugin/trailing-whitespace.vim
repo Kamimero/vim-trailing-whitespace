@@ -23,23 +23,28 @@ endfunction
 execute "highlight default ExtraWhitespace " . "ctermbg=" . s:ctermbg . " guibg=" . s:ctermbg
 execute "autocmd ColorScheme * highlight default ExtraWhitespace " . "ctermbg=" . s:ctermbg . " guibg=" . s:ctermbg
 
-autocmd BufNew,BufEnter *
-	\	if ShouldMatchWhitespace() |
-	\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+$/ |
-	\	else |
-	\		match ExtraWhitespace /^^/ |
-	\	endif
-
-" The above flashes annoyingly while typing, be calmer in insert mode
-autocmd InsertLeave *
-	\	if ShouldMatchWhitespace() |
-	\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+$/ |
-	\	endif
-
-autocmd InsertEnter *
-	\	if ShouldMatchWhitespace() |
-	\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+\%#\@<!$/ |
-	\	endif
+augroup TrailingWhitespaceAutoCmd
+	autocmd!
+	autocmd BufNew,BufEnter *
+		\	if ShouldMatchWhitespace() |
+		\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+$/ |
+		\	else |
+		\		match ExtraWhitespace /^^/ |
+		\	endif
+	" The above flashes annoyingly while typing, be calmer in insert mode
+	autocmd InsertLeave *
+		\	if ShouldMatchWhitespace() |
+		\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+$/ |
+		\	else |
+		\		match ExtraWhitespace /^^/ |
+		\	endif
+	autocmd InsertEnter *
+		\	if ShouldMatchWhitespace() |
+		\		match ExtraWhitespace /\\\@<![\u3000[:space:]]\+\%#\@<!$/ |
+		\	else |
+		\		match ExtraWhitespace /^^/ |
+		\	endif
+augroup END
 
 function! s:FixWhitespace(line1,line2)
     let l:save_cursor = getpos(".")
